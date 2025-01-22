@@ -2,6 +2,13 @@ use std::env;
 
 const MAX_DIGITS: u32 = 8;
 
+/// The entry point of the program that reads command-line arguments,
+/// converts the arguments from decimal to binary, and prints the results.
+///
+/// This function expects that the first command-line argument is a list of
+/// floating-point numbers, which will be converted to binary. The program
+/// will print a table displaying the original decimal numbers and their
+/// binary equivalents.
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -29,6 +36,23 @@ fn main() {
     }
 }
 
+/// Converts a decimal number (f64) to its binary representation as a string.
+///
+/// # Arguments
+///
+/// * `decimal` - A floating-point number to convert.
+/// * `target_base` - The base to convert to. This is expected to be 2 for binary conversions.
+///
+/// # Returns
+///
+/// A `String` containing the binary representation of the input `decimal`.
+///
+/// # Example
+///
+/// ```
+/// let binary = convert_from_decimal_to_binary(0.5, 2);
+/// assert_eq!(binary, "0.1");
+/// ```
 fn convert_from_decimal_to_binary(decimal: f64, target_base: u32) -> String {
     let mut result = String::from("0.");
     let mut fraction = decimal;
