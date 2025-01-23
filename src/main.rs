@@ -5,11 +5,42 @@ const MAX_DIGITS: u32 = 8;
 /// The entry point of the program that reads command-line arguments,
 /// converts the arguments from decimal to binary, and prints the results.
 ///
-/// This function expects that the first command-line argument is a list of
-/// floating-point numbers, which will be converted to binary. The program
-/// will print a table displaying the original decimal numbers and their
-/// binary equivalents.
+/// This function expects the command-line arguments to be a list of
+/// floating-point numbers in base 10, which will be converted to binary
+/// fractional representations. The program prints a table displaying the
+/// original decimal numbers and their binary equivalents.
 fn main() {
+    let f64_numbers = parse_input();
+
+    let binary_numbers: Vec<String> = f64_numbers
+        .iter()
+        .map(|&num| convert_from_decimal_to_binary(num, 2))
+        .collect();
+
+    display(f64_numbers, binary_numbers);
+}
+
+/// Reads fractional numbers in base 10 from the command-line arguments
+/// and parses them into a vector of `f64` values.
+///
+/// # Returns
+///
+/// A vector containing the parsed `f64` decimal numbers.
+///
+/// # Panics
+///
+/// This function assumes all arguments after the program name are valid
+/// floating-point numbers. If invalid arguments are provided, they will
+/// be skipped.
+///
+/// # Example
+/// ```
+/// // Assuming the program is run as follows:
+/// // cargo run 0.1 0.25 0.5
+/// let parsed = parse_input();
+/// assert_eq!(parsed, vec![0.1, 0.25, 0.5]);
+/// ```
+fn parse_input() -> Vec<f64> {
     let args: Vec<String> = env::args().collect();
 
     let f64_numbers: Vec<f64> = args
@@ -17,41 +48,25 @@ fn main() {
         .skip(1)
         .flat_map(|arg| arg.parse::<f64>())
         .collect();
-
-    let binary_numbers: Vec<String> = f64_numbers
-        .iter()
-        .map(|&num| convert_from_decimal_to_binary(num, 2))
-        .collect();
-
-    println!("| {:^10} | {:^10} |", "Base 10", "Base 2");
-
-    println!("|{:-<12}|{:-<12}|", ":", ":");
-
-    for i in 0..binary_numbers.len() {
-        println!(
-            "| {:<7} | {:<10} |",
-            format!("{:.1$}", f64_numbers[i], MAX_DIGITS as usize),
-            binary_numbers[i]
-        );
-    }
+    f64_numbers
 }
 
-/// Converts a decimal number (f64) to its binary representation as a string.
+/// Converts a decimal number (f64) to its binary fractional representation as a string.
 ///
 /// # Arguments
 ///
-/// * `decimal` - A floating-point number to convert.
-/// * `target_base` - The base to convert to. This is expected to be 2 for binary conversions.
+/// * `decimal` - The fractional number to convert.
+/// * `target_base` - The base to convert to. For binary, this must be 2.
 ///
 /// # Returns
 ///
-/// A `String` containing the binary representation of the input `decimal`.
+/// A `String` containing the binary fractional representation of the input `decimal`.
+/// The binary representation is truncated to `MAX_DIGITS` precision.
 ///
 /// # Example
-///
 /// ```
-/// let binary = convert_from_decimal_to_binary(0.5, 2);
-/// assert_eq!(binary, "0.1");
+/// let binary = convert_from_decimal_to_binary(0.75, 2);
+/// assert_eq!(binary, "0.11");
 /// ```
 fn convert_from_decimal_to_binary(decimal: f64, target_base: u32) -> String {
     let mut result = String::from("0.");
@@ -69,6 +84,36 @@ fn convert_from_decimal_to_binary(decimal: f64, target_base: u32) -> String {
     }
 
     result
+}
+
+/// Outputs the decimal numbers and their binary fractional representations in a table format.
+///
+/// # Arguments
+///
+/// * `f64_numbers` - A vector of decimal numbers in base 10.
+/// * `binary_numbers` - A vector of binary fractional strings corresponding to the decimal numbers.
+///
+/// # Example
+/// ```
+/// display(vec![0.5, 0.25], vec!["0.1".to_string(), "0.01".to_string()]);
+/// ```
+/// Output:
+/// |   Base 10   |   Base 2   |
+/// |:------------|:-----------|
+/// | 0.5         | 0.1        |
+/// | 0.25        | 0.01       |
+fn display(f64_numbers: Vec<f64>, binary_numbers: Vec<String>) {
+    println!("| {:^10} | {:^10} |", "Base 10", "Base 2");
+
+    println!("|{:-<12}|{:-<12}|", ":", ":");
+
+    for i in 0..binary_numbers.len() {
+        println!(
+            "| {:<7} | {:<10} |",
+            format!("{:.1$}", f64_numbers[i], MAX_DIGITS as usize),
+            binary_numbers[i]
+        );
+    }
 }
 
 #[cfg(test)]
