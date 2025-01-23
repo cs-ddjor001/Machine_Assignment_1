@@ -18,5 +18,5 @@ Example output:
 | 0.75    | 0.11   |
 
 # Dependencies #
-The program uses the Hamcrest library for unit testing. Ensure it is added under [dev-dependencies] in the Cargo.toml file.
+The program uses the Hamcrest library for unit testing.
 
